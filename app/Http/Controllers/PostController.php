@@ -1,7 +1,6 @@
 <?php
 namespace App\Http\Controllers;
 use App\Post;
-use App\User;
 use App\Category;
 use Illuminate\Http\Request;
 class PostController extends Controller
@@ -13,7 +12,7 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::with('category')->get();
+        $posts = Post::with('categories')->get();
         return view('admin.adminhome', compact(['posts']));
     }
     /**
@@ -23,14 +22,7 @@ class PostController extends Controller
      */
     public function create()
     {
-        // $posts = new Post;
-        // $posts->name = 'God of war';
-        // $posts->description = 'jdfd';
-        // $posts->save();
-        // $category = Category::find([3,4]);
-        // $posts->categories()->attach($category);
-
-        // return 'Success';
+        //
     }
     /**
      * Store a newly created resource in storage.
@@ -45,11 +37,11 @@ class PostController extends Controller
         'description' => 'required|min:1',
         ]);
         $formData= new Post;
-        $formData->category_id = $request->category_id;
         $formData->name = $request->name;
         $formData->description = $request->description;
-        $formData->category;
         $formData->save();
+        $formData->categories()->attach($request->categories);
+        $formData->categories;
         return response()->json([
         'formData' => $formData
         ]);
@@ -72,10 +64,8 @@ class PostController extends Controller
      */
     public function edit($id)
     {
-       $post = Post::find($id);
-       $category = Category::find($id);
-    // $post = Post::with('category')->get();
-       return view('admin.edit', compact('post', 'category'));
+        $post = Post::with('categories')->findOrFail($id);
+        return view('admin.edit', compact('post'));
     }
     /**
      * Update the specified resource in storage.
@@ -86,11 +76,11 @@ class PostController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $postData = Post::find($id);
+        $postData = Post::with('categories')->findOrFail($id);
         $postData->name = $request->name;
         $postData->description = $request->description;
-        $postData->category_id = $request->category_id;
-        $postData->update();
+        $postData->save();
+        $postData->categories()->sync($request->categories);
         return response()->json([
             'formData' => $postData
         ]);
@@ -115,14 +105,14 @@ class PostController extends Controller
         $categories = Category::all();
         return view('welcome', compact('posts', 'categories'));
     }
-
-    public function filterPosts($id)
-    {
-        $posts = Post::with('category')->where('category_id', $id)->get();
-        return view('showPostsByCategory',compact('posts'));
-    }
     public function readMore($id) {
         $posts = Post::findOrFail($id);
         return view('displayPost', compact('posts'));
+    }
+    public function filterByCategory ($id)
+    {
+        $category = Category::find($id);
+        $posts = $category->posts;
+        return view('showPostsByCategory',compact('posts', 'category'));
     }
 }

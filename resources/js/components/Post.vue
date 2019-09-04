@@ -16,10 +16,15 @@
                         <label>Description</label>
                         <textarea class="form-control" v-model="formData.description" rows="6"></textarea>
                     </div>
-                    <div class="dropdown">
-                        <label>Select Category</label>
-                        <select v-model="formData.category_id" class="form-control btn btn-primary">
-                            <option v-for="(category,index) in categoryList" :key="index" :value="category.id">{{ category.category }}</option>
+                    <div>
+                        <label>Select Categories</label>
+                        {{ selectedCategories }}
+                        <select v-model="selectedCategories" multiple>
+                            <option v-for="(category,index) in categoryList"
+                                :key="index"
+                                :value="category.id">
+                                {{ category.category }}
+                            </option>
                         </select>
                     </div>
                     <div style="text-align: center">
@@ -38,7 +43,10 @@
                             </div>
                             <div class="card-body">
                                 <h5>{{ formData.description }}</h5><hr>
-                                <h6 class="cat-style">Category:{{ formData.category.category }}</h6>
+                                <label class="categories">Categories:</label>
+                                <div v-for="(category, index) in formData.categories" :key="index">
+                                    {{ category.category}}
+                                </div>
                             </div>
                         </div>
                         <div style="text-align: center; margin-top:8px;">
@@ -61,13 +69,15 @@ export default {
     },
     data() {
         return {
+            selectedCategories: [],
             list: [],
             categoryList: [],
             formData: {
                 name: '',
                 description: '',
-                category_id: '',
-                category: ''
+                // category_id: '',
+                category: '',
+                // categories_id: [],
             },
         };
     },
@@ -77,8 +87,15 @@ export default {
             this.list = this.postData
             this.fetchCategory()
         }
+        this.fetchCat()
     },
     methods: {
+        async fetchCat () {
+            let res = await axios.get('/posts/3/filter')
+            if (res.data) {
+                console.log(res.data)
+            }
+        },
         async fetchCategory () {
             let res = await axios.get('/category')
             if (res.data) {
@@ -86,22 +103,20 @@ export default {
             }
         },
         async createPost() {
-                let data = {
-                    name: this.formData.name,
-                    description: this.formData.description,
-                    category_id: this.formData.category_id,
-                    category: this.formData.category,
-                }
-                console.log(data);
-                axios.post('/adminhome', data)
-                    .then((res) => {
-                        this.formData.name = '';
-                        this.formData.description = '';
-                        this.formData.category_id = '';
-                        this.formData.category = '';
-                        this.list.push(res.data.formData)
-                    })
-                    .catch((err) => console.error(err));
+            let data = {
+                name: this.formData.name,
+                description: this.formData.description,
+                categories: this.selectedCategories
+            }
+            console.log(data);
+            axios.post('/adminhome', data)
+                .then((res) => {
+                    this.formData.name = '';
+                    this.formData.description = '';
+                    this.formData.categoryList = '';
+                    this.list.push(res.data.formData)
+                })
+                .catch((err) => console.error(err));
         },
         deletePost(id,index) {
             axios.delete('adminhome/' +id)
@@ -117,12 +132,10 @@ export default {
     .card {
         width: 100%;
     }
-    .btn {
-        border: 1px solid #488AC7;
-    }
-    .dropdown {
-        width: 20%;
-        margin-bottom: 15px;
+    .categories {
+        color: black;
+        text-decoration: none;
+        margin-bottom: 5px;
     }
     .cat-style {
         color: black;

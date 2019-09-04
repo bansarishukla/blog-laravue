@@ -127,11 +127,11 @@
                     <div class="category">
                         <div class="card">
                             <div class="card-header">
-                                <h2 style="color: black;">Categories</h2>
+                                <h2 style="color: black;">Categories:</h2>
                             </div>
                             <div class="card-body">
                                 @foreach($categories as $category)
-                                    <li><a class="category_style" href="{{action('PostController@filterPosts', $category->id )}}">{{ $category->category }}</a></li>
+                                    <li><a class="category_style" href="{{action('PostController@filterByCategory', $category->id )}}">{{ $category->category }}</a></li>
                                 @endforeach
                             </div>
                         </div>

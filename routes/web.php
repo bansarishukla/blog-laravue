@@ -14,9 +14,9 @@
 use App\Http\Controllers\PostController;
 
 Route::get('/', 'PostController@getPosts');
-Route::get('/get-post/{id}', 'PostController@filterPosts');
 Route::get('/get-post/{id}/post', 'PostController@readMore');
 Route::get('/home','HomeController@index')->name('home');
+Route::get('/posts/{id}/filter', 'PostController@filterByCategory');
 Auth::routes();
 
 Route::group(['middleware' => ['auth','admin']], function(){
@@ -29,6 +29,7 @@ Route::group(['middleware' => ['auth','admin']], function(){
     Route::get('/adminhome/{id}/edit', 'PostController@edit');
     Route::delete('adminhome/{id}', 'PostController@destroy');
     Route::resource('/category', 'CategoryController');
+
 });
 
 

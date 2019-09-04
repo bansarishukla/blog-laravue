@@ -14,10 +14,10 @@ class CreateCategoryPostTable extends Migration
     public function up()
     {
         Schema::create('category_post', function (Blueprint $table) {
-            // $table->bigIncrements('id');
+            $table->bigIncrements('id');
             $table->integer('category_id')->unsigned();
             $table->integer('post_id')->unsigned();
-            // $table->timestamps();
+            $table->timestamps();
         });
     }
 

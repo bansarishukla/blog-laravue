@@ -25,15 +25,3 @@ $factory->define(User::class, function (Faker $faker) {
         'remember_token' => Str::random(10),
     ];
 });
-// $factory->define(Post::class, function (Faker $faker) {
-//     return [
-//         'category_id' => now(),
-//         'name' => $faker->name,
-//         'description' => $faker->description,
-//     ];
-// });
-// $factory->define(Category::class, function (Faker $faker) {
-//     return [
-//         'category' => $faker->category,
-//     ];
-// });
